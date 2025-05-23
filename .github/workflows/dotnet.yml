@@ -1,0 +1,32 @@
+name: .NET 8 CI  # Workflow name (shows up in the Actions tab)
+
+on:              # Trigger events
+  push:
+    branches: [ "main" ]  # Trigger on push to 'main'
+  pull_request:
+    branches: [ "main" ]  # Trigger on PR to 'main'
+
+jobs:             # A workflow is made of one or more jobs
+  build:          # Job name
+    runs-on: ubuntu-latest  # GitHub-hosted runner OS (Ubuntu, Windows, macOS)
+
+    env:                      # Environment variables
+      DOTNET_VERSION: '8.0.x'
+
+    steps:                   # Each job has a sequence of steps
+    - name: Checkout code    # Step 1: Pull code from GitHub repo
+      uses: actions/checkout@v3
+
+    - name: Setup .NET       # Step 2: Install .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore    # Step 3: Restore NuGet packages
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Run Tests
+      run: dotnet test --no-build --verbosity normal
