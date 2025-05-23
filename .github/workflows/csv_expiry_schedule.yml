@@ -1,0 +1,28 @@
+﻿name: Scheduled CSV Expiry Processor
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # ⏰ Runs daily at 00:00 UTC
+  workflow_dispatch:     # ✅ Allow manual trigger too (for testing)
+
+jobs:
+  process-csv:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore
+      run: dotnet restore ./GithubActionDemo/GithubActionDemo.csproj
+
+    - name: Build
+      run: dotnet build ./GithubActionDemo/GithubActionDemo.csproj --no-restore --configuration Release
+
+    - name: Run CsvExpiryProcessor
+      run: dotnet run --project ./GithubActionDemo/GithubActionDemo.csproj -- run-processor

@@ -5,6 +5,16 @@ namespace GithubActionDemo
     {
         public static void Main(string[] args)
         {
+            var argsList = args.Select(a => a.ToLower()).ToList();
+
+            if (argsList.Contains("run-processor"))
+            {
+                Console.WriteLine($"CsvExpiryProcessor started at UTC: {DateTime.UtcNow}...");
+                var processor = new CsvExpiryProcessor();
+                processor.Process();
+                Console.WriteLine("CsvExpiryProcessor completed.");
+                return; // Exit before starting the Web API
+            }
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
